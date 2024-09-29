@@ -1,0 +1,48 @@
+/* frontend/src/components/Register.css */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ffa500; /* Light orange border */
+    border-radius: 8px;
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.register-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ff4500; /* Dark orange text color */
+}
+
+.register-form input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ffcc80; /* Light orange border */
+    border-radius: 4px;
+    font-size: 14px;
+    width: calc(100% - 22px);
+}
+
+.register-form input:focus {
+    outline: none;
+    border-color: #ff4500; /* Dark orange border on focus */
+    box-shadow: 0 0 4px rgba(255, 69, 0, 0.5); /* Focus shadow in dark orange */
+}
+
+.register-form button {
+    padding: 10px;
+    background-color: #ffa500; /* Light orange background for button */
+    color: #fff; /* White text */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.register-form button:hover {
+    background-color: #ff4500; /* Darker orange on hover */
+}

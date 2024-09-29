@@ -1,49 +1,54 @@
-import React from 'react';
-import Helmet from '../components/Helmet/Helmet';
-import CommonSection from '../components/UI/common-section/CommonSection';
-import { Container, Row, Col } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+// frontend/src/components/Login.js
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext'; // Adjust the path if necessary
+import { useNavigate, Link } from 'react-router-dom';
+import './login.css';
 
 const Login = () => {
-  const loginNameRef = useRef();
-  const loginPasswordRef = useRef();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const submitHandler = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await login(username, password);
+      setError('');
+      navigate('/'); // Redirect to the desired landing page
+    } catch (error) {
+      setError('Invalid credentials');
+    }
   };
+
   return (
-    <Helmet title='Login'>
-      <CommonSection title='Login' />
-      <section>
-        <Container>
-          <Row>
-            <Col lg='6' md='6' sm='12' className='m-auto text-center'>
-              <form className='form mb-5' onSubmit={submitHandler}>
-                <div className='form__group'>
-                  <input
-                    type='email'
-                    placeholder='Email'
-                    ref={loginNameRef}
-                  ></input>
-                </div>
-                <div className='form__group'>
-                  <input
-                    type='password'
-                    placeholder='Password'
-                    ref={loginPasswordRef}
-                  ></input>
-                </div>
-                <button type='submit' className='addToCart__btn'>
-                  Login
-                </button>
-              </form>
-              <Link to='/register'>First time here? Create an account</Link>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </Helmet>
+    <form onSubmit={handleSubmit} className="login-form">
+      <h2>Login</h2>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit">Login</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <p>
+        Don't have an account?{' '}
+        <Link to="/register" className="create-account-link">
+          Create Account
+        </Link>
+      </p>
+    </form>
   );
 };
 

@@ -1,57 +1,113 @@
-import React from 'react';
-import Helmet from '../components/Helmet/Helmet';
-import CommonSection from '../components/UI/common-section/CommonSection';
-import { Container, Row, Col } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import { useRef } from 'react';
+// frontend/src/components/Register.js
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext'; // Adjust the path if necessary
+import { useNavigate } from 'react-router-dom'; // Use useNavigate from react-router-dom
+import './register.css';
 
 const Register = () => {
-  const registerNameRef = useRef();
-  const registerPasswordRef = useRef();
-  const registerEmailRef = useRef();
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    username: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const submitHandler = (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { password, confirmPassword, ...rest } = formData;
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    try {
+      await register(rest.firstName, rest.lastName, rest.username, rest.email, rest.phone, password);
+      setSuccess('Registration successful. Redirecting to login...');
+      setError('');
+      setTimeout(() => {
+        navigate('/login'); // Automatically redirect to login page after success
+      }, 2000); // Adjust the time as needed or remove if immediate redirect is preferred
+    } catch (error) {
+      setError('Registration failed');
+      setSuccess('');
+    }
+  };
+
   return (
-    <Helmet title='Register'>
-      <CommonSection title='Register' />
-      <section>
-        <Container>
-          <Row>
-            <Col lg='6' md='6' sm='12' className='m-auto text-center'>
-              <form className='form mb-5' onSubmit={submitHandler}>
-                <div className='form__group'>
-                  <input
-                    type='text'
-                    placeholder='Full Name'
-                    ref={registerNameRef}
-                  ></input>
-                </div>
-                <div className='form__group'>
-                  <input
-                    type='email'
-                    placeholder='Email'
-                    ref={registerEmailRef}
-                  ></input>
-                </div>
-                <div className='form__group'>
-                  <input
-                    type='password'
-                    placeholder='Password'
-                    ref={registerPasswordRef}
-                  ></input>
-                </div>
-                <button type='submit' className='addToCart__btn'>
-                  Sign up
-                </button>
-              </form>
-              <Link to='/login'>Already have an account? Login</Link>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-    </Helmet>
+    <form onSubmit={handleSubmit} className="register-form">
+      <h2>Register</h2>
+      <input
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        value={formData.firstName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="lastName"
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        value={formData.username}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="tel"
+        name="phone"
+        placeholder="Phone"
+        value={formData.phone}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="confirmPassword"
+        placeholder="Confirm Password"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit">Register</button>
+      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </form>
   );
 };
 
